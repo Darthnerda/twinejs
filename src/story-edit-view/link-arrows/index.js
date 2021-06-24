@@ -46,7 +46,7 @@ module.exports = Vue.extend({
 		links() {
 			return this.passages.reduce(
 				(result, passage) => {
-					result[passage.name] = uniq(linkParser(passage.text, true));
+					result[passage.name] = uniq(linkParser(passage.text, true, true));
 					return result;
 				},
 
@@ -62,7 +62,7 @@ module.exports = Vue.extend({
 			appearing, for example. Not sure if there are performance or
 			appearance implications to either approach.
 			*/
-			
+
 			return {
 				transform: 'scale(' + this.zoom + ')',
 				width: 100 * 1 / this.zoom + '%',

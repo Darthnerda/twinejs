@@ -45,7 +45,7 @@ const extractLink = (tagContent) => {
 	Arrow links:
 	[[display text->link]] format
 	[[link<-display text]] format
-	
+
 	Interpret the rightmost '->' and the leftmost '<-' as the divider.
 	*/
 
@@ -57,25 +57,46 @@ const extractLink = (tagContent) => {
 		   [[display text|link]] format
 		   */
 		   getField(tagContent, '|', -1) ||
-		   
+
 		   /* [[link]] format */
 		   tagContent;
 };
-										   
-module.exports = (text, internalOnly) => {
+
+const extractKind = (tagContent) => {
+	return getField(tagContent, '->', 0) ||
+			 getField(tagContent, '<-', -1) ||
+
+			 /*
+			 TiddlyWiki links:
+			 [[display text|link]] format
+			 */
+			 getField(tagContent, '|', 0) ||
+
+			 /* [[link]] format */
+			 tagContent;
+};
+
+module.exports = (text, internalOnly, includekind) => {
 	/*
 	Link matching regexps ignore setter components, should they exist.
 	*/
 
-	let result = extractLinkTags(text)
+	let formattedTags = extractLinkTags(text)
 		.map(removeEnclosingBrackets)
 		.map(removeSetters)
+
+	let result = formattedTags
 		.map(extractLink)
 		.filter(nonEmptyLinks)
 		.filter(uniques);
 
 	if (internalOnly) {
 		result = result.filter(internalLinks);
+	}
+
+	if (includekind) {
+		var kinds = formattedTags.map(extractKind);
+		result = result.map( (e, i) => ({link: e, kind: kinds[i]}));
 	}
 
 	return result;

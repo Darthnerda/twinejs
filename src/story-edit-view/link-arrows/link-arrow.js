@@ -8,7 +8,7 @@ rotation, sweep, and end properties.
 
 function arc(props) {
 	const { start, radius, end, largeArc, sweep, rotation } = props;
-	
+
 	return 'M' + start.left + ',' + start.top +
 		' A' + radius.x + ',' + radius.y +
 		' ' + (rotation || '0') +
@@ -36,13 +36,18 @@ module.exports = Vue.extend({
 		The possible anchor points to use as the end of this connector. This
 		should have top, left, right, and bottom properties, each an (x, y)
 		array.
-		
+
 		It's OK for this to be null or undefined; in those cases, we draw a
 		broken link indicator.
 		*/
 
 		end: {
 			type: Object,
+			required: false
+		},
+
+		kind: {
+			type: String,
 			required: false
 		}
 	},
@@ -53,8 +58,8 @@ module.exports = Vue.extend({
 		*/
 
 		markerType() {
-			const { start, end } = this;
-			
+			const { start, end, kind } = this;
+
 			if (!start) {
 				console.warn('Start position has no anchor points');
 				return;
@@ -64,6 +69,24 @@ module.exports = Vue.extend({
 
 			if (!end) {
 				return 'broken';
+			}
+
+			if (kind) {
+				let ret = '';
+				switch (kind) {
+					case 'adds':
+						ret = 'adds';
+						break;
+					case 'subtracts':
+						ret = 'subtracts'
+						break;
+					case 'next':
+						ret = 'next'
+						break;
+					default:
+						ret = 'arrow'
+				}
+				return ret;
 			}
 
 			return 'arrow';
@@ -89,7 +112,7 @@ module.exports = Vue.extend({
 			Special case self-links to draw an arc from the left anchor to the
 			top.
 			*/
-			
+
 			if (start === end) {
 				const radius = 0.4 * Math.min(start.width, start.height);
 
@@ -110,11 +133,11 @@ module.exports = Vue.extend({
 					largeArc: true
 				});
 			}
-			
+
 			/*
 			Special case broken links to show a short arc down.
 			*/
-			
+
 			if (!end) {
 				return arc({
 					start: {
@@ -132,7 +155,7 @@ module.exports = Vue.extend({
 					sweep: true
 				});
 			}
-			
+
 			/*
 			Find the start and end points to draw.
 			*/

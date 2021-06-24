@@ -7,6 +7,15 @@
 		<marker id="link-broken" refX="4.5" refY="4.5" markerWidth="10" markerHeight="10">
 			<path d="M 1,2 2,1 5,4 8,1 9,2 6,5 9,8 8,9, 5,6 2,9 1,8 4,5 Z">
 		</marker>
+		<marker id="link-adds" refX="4.5" refY="4.5" markerWidth="10" markerHeight="10">
+			<path d="M 1,1 7,4 1,7 Z">
+		</marker>
+		<marker id="link-subtracts" refX="4.5" refY="4.5" markerWidth="10" markerHeight="10">
+			<path d="M 1,1 7,4 1,7 Z">
+		</marker>
+		<marker id="link-next" refX="4.5" refY="4.5" markerWidth="10" markerHeight="10">
+			<path d="M 1,1 7,4 1,7 Z">
+		</marker>
 	</defs>
 
 	<style>
@@ -17,11 +26,23 @@
 		.marker-broken {
 			marker-end: url(#link-broken);
 		}
+
+		.marker-adds {
+			marker-end: url(#link-adds);
+		}
+
+		.marker-subtracts {
+			marker-end: url(#link-subtracts);
+		}
+
+		.marker-next {
+			stroke: #0000FF;
+		}
 	</style>
 
 	<template v-for="(start, startLinks) in links" track-by="$index">
 		<template v-for="end in startLinks" track-by="$index">
-			<link-arrow :start="positions[start]" :end="positions[end]"></link-arrow>
+			<link-arrow :start="positions[start]" :end="positions[end.link]" :kind="end.kind"></link-arrow>
 		</template>
 	</template>
 </svg>
